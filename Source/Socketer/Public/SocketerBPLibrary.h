@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Kismet/BlueprintFunctionLibrary.h"
+#include "Engine.h"
 #include "Socket.h"
+#include "Runtime/Networking/Public/Networking.h"
 #include "Runtime/Sockets/Public/Sockets.h"
 #include "Runtime/Sockets/Public/SocketSubsystem.h"
 #include "SocketerBPLibrary.generated.h"
@@ -46,6 +46,20 @@ class USocketerBPLibrary : public UBlueprintFunctionLibrary
 	*/
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Connect to a TCP server", Keywords = "Socketer connect tcp tcpconnect socketerconnect"), Category = "Networking|Socketer")
 	static USocketerSocket* Connect(FString Host, int32 port, bool &success);
+
+	/*
+	* Create UDP connection.
+	* 
+	* @param Host The host name or IP address of the server you'd like to connect to.
+	* @param port The port your server application is listening on.
+	* 
+	* @param success True if a connection was correctly established, false otherwise.
+	*/
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Create UDP connection", Keywords = "Socketer connect UDP socketerconnect"), Category = "Networking|Socketer")
+	static USocketerSocket* CreateUDP( int32 port, bool &success);
+	
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Destroy UDP connection", Keywords = "Socketer connect UDP socketerconnect"), Category = "Networking|Socketer")
+	static void RemoveUDP( USocketerSocket * Socket );
 
 	/*
 	* Send a string over a TCP connection.

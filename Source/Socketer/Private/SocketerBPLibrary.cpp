@@ -61,6 +61,44 @@ USocketerSocket* USocketerBPLibrary::Connect(FString Host, int32 port, bool& bSu
 	return NetSock;
 }
 
+USocketerSocket* USocketerBPLibrary::CreateUDP(int32 port, bool& bSuccessful)
+{
+
+	FSocket* MySockTemp = FUdpSocketBuilder( FString("UDP socket") )
+		.AsNonBlocking()
+		.AsReusable()
+		.BoundToPort(port)
+		.WithSendBufferSize(1024*2)
+		.WithReceiveBufferSize(1024*2);
+
+	USocketerSocket* NetSock = NewObject<USocketerSocket>();
+	// auto state = MySockTemp->GetConnectionState();
+	// // Verify it is connected
+	// if (state==ESocketConnectionState::SCS_ConnectionError)
+	// {
+	// 	// And if not log an error and return an error
+	// 	UE_LOG(LogTemp, Error, TEXT("Could not connect"));
+	// 	bSuccessful = false;
+	// 	return nullptr;
+	// }
+
+	// Set the UObject wrappers its socket to the connected one
+	NetSock->SetSocket(MySockTemp);
+
+	bSuccessful = true;
+	return NetSock;
+}
+
+void USocketerBPLibrary::RemoveUDP( USocketerSocket * Socket ){
+		//Clear all sockets!
+	//		makes sure repeat plays in Editor dont hold on to old sockets!
+	if(Socket->GetSocket())
+	{
+		Socket->GetSocket()->Close();
+		ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(Socket->GetSocket());
+	}
+}
+
 bool USocketerBPLibrary::SendMessage(USocketerSocket * Connection, FString Message)
 {
 	
